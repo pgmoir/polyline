@@ -123,6 +123,53 @@ function flipped(coords) {
     return flipped;
 }
 
+/*
+ * Polygon coordinates includes a 3rd parameter, so replaced the flipped option which brought
+ * the 3rd parameter to the front, with a more basic swapped function, that just swaps the first and second
+ * items in the array (array index 0 and 1) 
+*/
+function swapped(coords) {
+    var swapped = [];
+    for (var i = 0; i < coords.length; i++) {
+        var c = coords[i].slice();
+        [c[0],c[1]] = [c[1],c[0]];
+        swapped.push(c);
+    }
+    return swapped;
+}
+
+/*
+ * Utility to function to get depth of array, as found the input Polygon may go one level deeper than expected
+*/
+const getDepthOfArray = (arr) => {
+
+    let depth = 0;
+    let included = [];
+  
+    const checkDepth = (arr, included, level) => {
+      if (Array.isArray(arr)) {
+        depth++;
+        included[level] = true;
+        checkDeeper(arr, included, level+1)
+      }
+    };
+  
+    const checkDeeper = (arr, included, level) => {
+      for (var i = 0; i < arr.length; i++) {
+        if (Array.isArray(arr[i])) {
+          if (!included[level]) {
+            depth++;
+            included[level] = true;
+          }
+          checkDeeper(arr[i], included, level+1);
+        }
+      };
+    };
+  
+    checkDepth(arr, included, 0);
+    return depth;
+  }
+
 /**
  * Encodes a GeoJSON LineString feature/geometry.
  *
@@ -131,14 +178,35 @@ function flipped(coords) {
  * @returns {String}
  */
 polyline.fromGeoJSON = function(geojson, precision) {
+    if (geojson && geojson.type === 'FeatureCollection') {
+        return fromFeatureCollection(geojson, precision);
+    }
+    return fromFeature(geojson, precision)
+};
+
+function fromFeatureCollection(geojson, precision) {
+    let geojsons = geojson.features;
+    let paths = [];
+    if (Array.isArray(geojsons)) {
+        geojsons.forEach(geojson => {
+            paths.push(fromFeature(geojson, precision));
+        });
+    }
+    return { encodedPaths: paths };
+}
+
+function fromFeature(geojson, precision) {
     if (geojson && geojson.type === 'Feature') {
         geojson = geojson.geometry;
     }
-    if (!geojson || geojson.type !== 'LineString') {
-        throw new Error('Input must be a GeoJSON LineString');
+    if (!geojson || (geojson.type !== 'LineString' && geojson.type !== 'Polygon')) {
+        throw new Error('Input must be a GeoJSON LineString or Polygon');
     }
-    return polyline.encode(flipped(geojson.coordinates), precision);
-};
+    while (getDepthOfArray(geojson.coordinates) > 2) {
+        geojson.coordinates = geojson.coordinates[0];
+    }
+    return polyline.encode(swapped(geojson.coordinates), precision);
+}
 
 /**
  * Decodes to a GeoJSON LineString geometry.

@@ -55,3 +55,10 @@ Example :
 ```
 cat file.json | ./bin/polyline.bin.js --fromGeoJSON > result.txt
 ```
+
+Example :
+For handling TfL generated geojson files with multiple Features in FeatureCollection array, and outputting to object with EncodedPaths for use on TfLOnline (stored in tfl-gov-uk\TfL.Web\MapsSource\framework\map\layers\static_polygon_data) and RUCOnline. Examples of both files in project.
+
+```
+cat ccz-geo.json | ./bin/polyline.bin.js --fromGeoJSON > ccz.json
+```
