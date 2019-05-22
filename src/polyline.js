@@ -168,7 +168,7 @@ const getDepthOfArray = (arr) => {
   
     checkDepth(arr, included, 0);
     return depth;
-  }
+}
 
 /**
  * Encodes a GeoJSON LineString feature/geometry.
