@@ -11,7 +11,7 @@ string. If not specified, precision defaults to 5.
 
 ### polyline.fromGeoJSON(geojson[, precision])
 
-Takes a GeoJSON LineString feature and returns an encoded string. If not specified, precision defaults to 5.
+Takes a GeoJSON LineString, Polygon feature or FeatureCollection of the former listed features and returns an encoded string, or object of encoded paths. If not specified, precision defaults to 5.
 
 ### polyline.toGeoJSON(string[, precision])
 
