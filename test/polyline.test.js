@@ -9,6 +9,7 @@ test('polyline', function(t) {
         // encoded value will enclude slashes -> tests escaping
         example_slashes = [[35.6, -82.55], [35.59985, -82.55015], [35.6, -82.55]],
         example_flipped = [[-120.2, 38.5], [-120.95, 40.7], [-126.453, 43.252]],
+        example_polygon = [[[-120.2, 38.5, 0], [-120.95, 40.7, 0], [-126.453, 43.252, 0], [-120.2, 38.5, 0]]],
         example_rounding = [[0, 0.000006], [0, 0.000002]],
         example_rounding_negative = [[36.05322, -112.084004], [36.053573, -112.083914], [36.053845, -112.083965]];
 
@@ -18,6 +19,21 @@ test('polyline', function(t) {
             'coordinates': example_flipped
         },
         'properties': {}
+    };
+
+    var geojsonPolygon = { 'type': 'Feature',
+        'geometry': {
+            'type': 'Polygon',
+            'coordinates': example_polygon
+        },
+        'properties': {}
+    };
+
+    var featureCollection = {'name':'CLoCCS_Boundary (JSON)','type':'FeatureCollection'
+        ,'features':[
+            {'type':'Feature','geometry':{'type':'Polygon','coordinates':[[[-0.149771209943531,51.5032950990106,0],[-0.149910546128835,51.5032456944487,0],[-0.150019915309231,51.5032116402553,0],[-0.150200298632032,51.5031695354625,0],[-0.150313232173393,51.5031472238773,0],[-0.150554898042159,51.5031085120968,0],[-0.149826090184599,51.5033421727736,0],[-0.149771209943531,51.5032950990106,0]]]},'properties':{'OBJECTID':1,'BOUNDARY':'CLoCCS','DESCRIPTIO':'Central London Congestion Charging Scheme','SHAPE_AREA':0,'SHAPE_LEN':0}}
+            ,{'type':'Feature','geometry':{'type':'Polygon','coordinates':[[[-0.106343168936631,51.5318176222392,0],[-0.106039777013134,51.5317808098759,0],[-0.105901735336719,51.5317556573613,0],[-0.105521077921582,51.5315956026483,0],[-0.0782388143744422,51.5027143033449,0],[-0.165870454874022,51.5192644822077,0],[-0.10971243678472,51.5317186840771,0],[-0.106598622716693,51.5318293874794,0],[-0.106343168936631,51.5318176222392,0]]]},'properties':{'OBJECTID':2,'BOUNDARY':'CLoCCS','DESCRIPTIO':'Central London Congestion Charging Scheme','SHAPE_AREA':0,'SHAPE_LEN':0}}
+        ]
     };
 
     t.test('#decode()', function(t) {
@@ -99,15 +115,26 @@ test('polyline', function(t) {
     });
 
     t.test('#fromGeoJSON()', function(t) {
-        t.test('throws for non linestrings', function(t) {
+        t.test('throws for non linestrings/polygons and non feature collections', function(t) {
             t.throws(function() {
                 polyline.fromGeoJSON({});
-            }, /Input must be a GeoJSON LineString/);
+            }, /Input must be a GeoJSON LineString or Polygon/);
             t.end();
         });
 
-        t.test('allows geojson geometries', function(t) {
+        t.test('allows geojson geometries for linestring', function(t) {
             t.equal(polyline.fromGeoJSON(geojson.geometry), '_p~iF~ps|U_ulLnnqC_mqNvxq`@');
+            t.end();
+        });
+
+        t.test('allows geojson geometries for polygons', function(t) {
+            t.equal(polyline.fromGeoJSON(geojsonPolygon.geometry), '_p~iF~ps|U_ulLnnqC_mqNvxq`@~b_\\ghde@');
+            t.end();
+        });
+
+        t.test('allows geojson feature collection', function(t) {
+            t.equal(JSON.stringify(polyline.fromGeoJSON(featureCollection)), 
+                JSON.stringify({ encodedPaths: ["sfjyH`g\\HZFTFb@BTFn@m@oCFK", "{xoyHrwSF{@B[^kApsDoiDmfBtbP{lA_~IUmR@s@"]}));
             t.end();
         });
 
