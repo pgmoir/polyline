@@ -132,7 +132,8 @@ function swapped(coords) {
     var swapped = [];
     for (var i = 0; i < coords.length; i++) {
         var c = coords[i].slice();
-        [c[0],c[1]] = [c[1],c[0]];
+        c[0] = coords[i][1];
+        c[1] = coords[i][0];
         swapped.push(c);
     }
     return swapped;
@@ -141,12 +142,12 @@ function swapped(coords) {
 /*
  * Utility to function to get depth of array, as found the input Polygon may go one level deeper than expected
 */
-const getDepthOfArray = (arr) => {
+function getDepthOfArray(arr) {
 
-    let depth = 0;
-    let included = [];
+    var depth = 0;
+    var included = [];
   
-    const checkDepth = (arr, included, level) => {
+    function checkDepth(arr, included, level) {
       if (Array.isArray(arr)) {
         depth++;
         included[level] = true;
@@ -154,7 +155,7 @@ const getDepthOfArray = (arr) => {
       }
     };
   
-    const checkDeeper = (arr, included, level) => {
+    function checkDeeper(arr, included, level) {
       for (var i = 0; i < arr.length; i++) {
         if (Array.isArray(arr[i])) {
           if (!included[level]) {
@@ -185,12 +186,12 @@ polyline.fromGeoJSON = function(geojson, precision) {
 };
 
 function fromFeatureCollection(geojson, precision) {
-    let geojsons = geojson.features;
-    let paths = [];
+    var geojsons = geojson.features;
+    var paths = [];
     if (Array.isArray(geojsons)) {
-        geojsons.forEach(geojson => {
-            paths.push(fromFeature(geojson, precision));
-        });
+        for (var i = 0; i < geojsons.length; i++) {
+            paths.push(fromFeature(geojsons[i], precision));
+        };
     }
     return { encodedPaths: paths };
 }
