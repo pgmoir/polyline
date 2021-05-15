@@ -1,11 +1,10 @@
-[![Build Status](https://secure.travis-ci.org/mapbox/polyline.png?branch=master)](http://travis-ci.org/mapbox/polyline) [![Coverage Status](https://coveralls.io/repos/mapbox/polyline/badge.svg)](https://coveralls.io/r/mapbox/polyline)
-
+[![Build Status](https://travis-ci.com/mapbox/polyline.svg)](http://travis-ci.com/mapbox/polyline) [![codecov](https://codecov.io/gh/mapbox/polyline/branch/master/graph/badge.svg)](https://codecov.io/gh/mapbox/polyline)
 # polyline
 
 A simple [google-esque polyline](https://developers.google.com/maps/documentation/utilities/polylinealgorithm)
 implementation in Javascript. Compatible with nodejs (`npm install @mapbox/polyline` and the browser (copy `src/polyline.js`)).
 
-Encodes/decodes into [lat, lng] coordinate pairs. Use `fromGeoJSON()` to encode from GeoJSON objects, or `toGeoJSON` to
+Encodes from / decodes into `[lat, lng]` coordinate pairs. Use `fromGeoJSON()` to encode from GeoJSON objects, or `toGeoJSON` to
 decode to a GeoJSON LineString.
 
 ## Installation
@@ -28,7 +27,7 @@ polyline.decode('cxl_cBqwvnS|Dy@ogFyxmAf`IsnA|CjFzCsHluD_k@hi@ljL', 6);
 // returns a GeoJSON LineString feature
 polyline.toGeoJSON('_p~iF~ps|U_ulLnnqC_mqNvxq`@');
 
-// returns a string-encoded polyline
+// returns a string-encoded polyline (from coordinate ordered lat,lng)
 polyline.encode([[38.5, -120.2], [40.7, -120.95], [43.252, -126.453]]);
 
 // returns a string-encoded polyline from a GeoJSON LineString or Polygon
